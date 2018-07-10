@@ -4,7 +4,7 @@ from conans import ConanFile, CMake
 class PackageTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
-    build_requires = "boost/[~=1.66.0]@odant/testing"
+    build_requires = "boost/[>=1.66.0]@odant/testing"
 
     def build(self):
         cmake = CMake(self)
