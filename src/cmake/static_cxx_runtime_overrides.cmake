@@ -2,7 +2,7 @@
 # Copyright (c) 2010-2015 Marat Abrarov (abrarov@gmail.com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
-# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+# file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
 cmake_minimum_required(VERSION 2.8.11)
@@ -17,7 +17,7 @@ if(MSVC)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -static-libstdc++")
 endif()
 
 set(Boost_USE_STATIC_LIBS    ON)

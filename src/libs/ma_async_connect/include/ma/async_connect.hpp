@@ -2,7 +2,7 @@
 // Copyright (c) 2010-2015 Marat Abrarov (abrarov@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
 #ifndef MA_ASYNC_CONNECT_HPP
@@ -234,23 +234,31 @@ void async_connect(Socket& socket,
   BOOL ok = connect_ex_func(native_socket, peer_endpoint.data(),
       boost::numeric_cast<int>(peer_endpoint.size()), NULL, 0, NULL,
       overlapped.get());
-  int last_error = ::WSAGetLastError();
-
-  // Check if the operation completed immediately.
-  if ((FALSE == ok) && (ERROR_IO_PENDING != last_error))
-  {
-    // The operation completed immediately, so a completion notification needs
-    // to be posted. When complete() is called, ownership of the OVERLAPPED-
-    // derived object passes to the io_service.
-    boost::system::error_code error(last_error,
-        boost::asio::error::get_system_category());
-    overlapped.complete(error, 0);
-  }
-  else
+  if (FALSE != ok)
   {
     // The operation was successfully initiated, so ownership of the
     // OVERLAPPED-derived object has passed to the io_service.
     overlapped.release();
+  }
+  else
+  {
+    int last_error = ::WSAGetLastError();
+    // Check if the operation completed immediately.
+    if (ERROR_IO_PENDING != last_error)
+    {
+      // The operation completed immediately, so a completion notification needs
+      // to be posted. When complete() is called, ownership of the OVERLAPPED-
+      // derived object passes to the io_service.
+      boost::system::error_code error(last_error,
+          boost::asio::error::get_system_category());
+      overlapped.complete(error, 0);
+    }
+    else
+    {
+      // The operation was successfully initiated, so ownership of the
+      // OVERLAPPED-derived object has passed to the io_service.
+      overlapped.release();
+    }
   }
 
 #else // defined(MA_ASYNC_CONNECT_USES_WINDOWS_CONNECT_EX)

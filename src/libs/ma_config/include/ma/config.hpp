@@ -2,7 +2,7 @@
 // Copyright (c) 2010-2015 Marat Abrarov (abrarov@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
 #ifndef MA_CONFIG_HPP
@@ -222,5 +222,22 @@
 #if !defined(MA_WIN32_TMAIN) && defined(WIN32) && !defined(__MINGW32__)
 #define MA_WIN32_TMAIN
 #endif
+
+#if BOOST_VERSION >= 106600
+
+#define MA_ASIO_IO_CONTEXT_INT_CONCURRENCY_HINT
+
+#if defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
+#undef MA_ASIO_DETAIL_SIGNAL_SET_SERVICE
+#else
+#define MA_ASIO_DETAIL_SIGNAL_SET_SERVICE
+#endif // defined(BOOST_ASIO_ENABLE_OLD_SERVICES)
+
+#else // BOOST_VERSION >= 106600
+
+#undef MA_ASIO_IO_CONTEXT_INT_CONCURRENCY_HINT
+#undef MA_ASIO_DETAIL_SIGNAL_SET_SERVICE
+
+#endif // BOOST_VERSION >= 106600
 
 #endif // MA_CONFIG_HPP

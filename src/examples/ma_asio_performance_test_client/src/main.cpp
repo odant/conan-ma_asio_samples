@@ -5,7 +5,7 @@
 // Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
 #if defined(WIN32)
@@ -37,6 +37,7 @@
 #include <ma/strand.hpp>
 #include <ma/limited_int.hpp>
 #include <ma/thread_group.hpp>
+#include <ma/io_context_helpers.hpp>
 #include <ma/detail/memory.hpp>
 #include <ma/detail/functional.hpp>
 #include <ma/detail/thread.hpp>
@@ -973,7 +974,7 @@ client_config build_client_config(
       build_optional_int(options_values, socket_send_buffer_size_option_name);
 
   tribool no_delay = boost::logic::indeterminate;
-  if (0 != options_values.count(no_delay_option_name))
+  if (options_values.count(no_delay_option_name))
   {
     no_delay = options_values[no_delay_option_name].as<bool>();
   }
@@ -1107,14 +1108,14 @@ io_service_vector create_session_io_services(const client_config& config)
   {
     for (std::size_t i = 0; i != config.thread_count; ++i)
     {
-      io_services.push_back(
-          ma::detail::make_shared<boost::asio::io_service>(1));
+      io_services.push_back(ma::detail::make_shared<boost::asio::io_service>(
+          ma::to_io_context_concurrency_hint(1)));
     }
   }
   else
   {
-    io_services.push_back(
-        ma::detail::make_shared<boost::asio::io_service>(config.thread_count));
+    io_services.push_back(ma::detail::make_shared<boost::asio::io_service>(
+        ma::to_io_context_concurrency_hint(config.thread_count)));
   }
   return io_services;
 }
@@ -1198,7 +1199,8 @@ int main(int argc, char* argv[])
     const io_service_vector session_io_services =
         create_session_io_services(config);
 
-    boost::asio::io_service session_manager_io_service(1);
+    boost::asio::io_service session_manager_io_service(
+        ma::to_io_context_concurrency_hint(1));
     session_manager::protocol::resolver resolver(session_manager_io_service);
     session_manager client_session_manager(session_manager_io_service,
         session_io_services, config.client_session_manager_config);

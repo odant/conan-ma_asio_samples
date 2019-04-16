@@ -2,7 +2,7 @@
 # Copyright (c) 2010-2015 Marat Abrarov (abrarov@gmail.com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
-# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+# file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
 cmake_minimum_required(VERSION 2.8.11)
@@ -38,7 +38,7 @@ function(ma_list_subdirs files base_dir results)
         endif()        
 
         string(FIND "${case_normalized_file_path}" "${case_normalized_base_dir}" start_pos)
-        if(${start_pos} EQUAL 0)
+        if(start_pos EQUAL 0)
             file(RELATIVE_PATH subdir "${cmake_base_dir}" "${file_path}")
             list(APPEND subdirs "${subdir}")
             set(subdir_found TRUE)
@@ -109,7 +109,7 @@ endfunction()
 # Changes existing (default) compiler options.
 # Parameters:
 #   result - name of list to store compile options.
-function(change_default_compile_options orignal_compile_options result)
+function(ma_change_default_compile_options orignal_compile_options result)
     set(compile_options ${orignal_compile_options})
     # Turn on more strict warning mode
     if(MSVC)
@@ -122,14 +122,39 @@ function(change_default_compile_options orignal_compile_options result)
     set(${result} "${compile_options}" PARENT_SCOPE)
 endfunction()
 
+# Changes existing (default) linker options.
+# Parameters:
+#   result - name of list to store link options.
+function(ma_change_default_link_options orignal_link_options result)
+    set(link_options ${orignal_link_options})
+    if(MSVC AND (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel"))
+        # Disable incremental linking for Intel C++ Compiler because it leads to crash of linker.
+        if(NOT (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "16"))
+            if(link_options MATCHES "/INCREMENTAL:NO")
+                # Nothing to change here
+            elseif(link_options MATCHES "/INCREMENTAL")
+                string(REGEX REPLACE "/INCREMENTAL" "/INCREMENTAL:NO" link_options "${link_options}")
+            else()
+                set(link_options "${link_options} /INCREMENTAL:NO")
+            endif()
+        endif()
+    endif()
+    set(${result} "${link_options}" PARENT_SCOPE)
+endfunction()
+
 # Builds list of additional internal compiler options.
 # Parameters:
 #   result - name of list to store compile options.
-function(config_private_compile_options result)
+function(ma_config_private_compile_options result)
     set(compile_options )
-    # Turn on more strict warning mode
     if(MSVC)
+        # Turn on more strict warning mode
         list(APPEND compile_options "/W4")
+        if((MSVC_VERSION EQUAL 1800) OR (MSVC_VERSION GREATER 1800))
+            # Turn on option which is turned on by default in Visual Studio (when using Visual Studio generator)
+            # ans is turned off by default in compiler command line (when using makefiles, for example).
+            list(APPEND cxx_compile_options "/Zc:inline")
+        endif()
     elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
         list(APPEND compile_options "-Wall" "-Wextra" "-pedantic" "-Wunused" "-Wno-long-long")
     endif()
@@ -139,16 +164,8 @@ endfunction()
 # Builds list of additional transitive compiler options.
 # Parameters:
 #   result - name of list to store compile options.
-function(config_public_compile_options result)
+function(ma_config_public_compile_options result)
     set(compile_options )
-    # Turn on thread support for GCC
-    if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-        if(MINGW)
-            list(APPEND compile_options "-mthreads")
-        else()
-            list(APPEND compile_options "-pthread")
-        endif()
-    endif()
     # Turn on support of C++11 if it's available
     if(CMAKE_COMPILER_IS_GNUCXX)
         if(NOT (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.7"))
@@ -171,7 +188,7 @@ endfunction()
 # Builds list of additional internal compiler definitions.
 # Parameters:
 #   result - name of list to store compile definitions.
-function(config_private_compile_definitions result)
+function(ma_config_private_compile_definitions result)
     set(compile_definitions )
     set(${result} "${compile_definitions}" PARENT_SCOPE)
 endfunction()
@@ -179,7 +196,7 @@ endfunction()
 # Builds list of additional transitive compiler definitions.
 # Parameters:
 #   result - name of list to store compile definitions.
-function(config_public_compile_definitions result)
+function(ma_config_public_compile_definitions result)
     set(compile_definitions )
     # Additional preprocessor definitions for Windows target
     if(WIN32)
@@ -193,6 +210,20 @@ function(config_public_compile_definitions result)
             _UNICODE
             UNICODE
             _WINSOCK_DEPRECATED_NO_WARNINGS)
+    endif()
+    # If using Intel C++ Compiler with Visual Studio
+    if(MSVC AND (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel"))
+        # If Intel C++ Compiler 16.0 and Visual Studio 2015+
+        if((CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "16") AND ((MSVC_VERSION EQUAL 1900) OR (MSVC_VERSION GREATER 1900)))
+            # Apply fix decribed at https://software.intel.com/en-us/articles/limits1120-error-identifier-builtin-nanf-is-undefined
+            list(APPEND compile_definitions
+                "__builtin_huge_val()=HUGE_VAL"
+                "__builtin_huge_valf()=HUGE_VALF"
+                "__builtin_nan=nan"
+                "__builtin_nanf=nanf"
+                "__builtin_nans=nan"
+                "__builtin_nansf=nanf")
+        endif()
     endif()
     set(${result} "${compile_definitions}" PARENT_SCOPE)
 endfunction()

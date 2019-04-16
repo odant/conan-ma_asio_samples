@@ -2,7 +2,7 @@
 # Copyright (c) 2015-2016 Marat Abrarov (abrarov@gmail.com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
-# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+# file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
 cmake_minimum_required(VERSION 3.0)
@@ -21,12 +21,12 @@ set(native_resources )
 set(native_resource_headers )
 set(qt_msvs_project_support_files )
 
-config_public_compile_options(cxx_public_compile_options)
-config_public_compile_definitions(cxx_public_compile_definitions)
+ma_config_public_compile_options(cxx_public_compile_options)
+ma_config_public_compile_definitions(cxx_public_compile_definitions)
 set(cxx_public_libraries )
 
-config_private_compile_options(cxx_private_compile_options)
-config_private_compile_definitions(cxx_private_compile_definitions)
+ma_config_private_compile_options(cxx_private_compile_options)
+ma_config_private_compile_definitions(cxx_private_compile_definitions)
 set(cxx_private_libraries )
 
 # Determine major version of Qt to use (Qt 5 is preferred)

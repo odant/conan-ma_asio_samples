@@ -2,7 +2,7 @@
 // Copyright (c) 2010-2015 Marat Abrarov (abrarov@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
 #if defined(WIN32)
@@ -21,6 +21,7 @@
 #include <ma/handler_allocator.hpp>
 #include <ma/console_close_guard.hpp>
 #include <ma/thread_group.hpp>
+#include <ma/io_context_helpers.hpp>
 #include <ma/detail/memory.hpp>
 #include <ma/detail/functional.hpp>
 #include <ma/detail/thread.hpp>
@@ -99,7 +100,7 @@ int main(int /*argc*/, char* /*argv*/[])
     std::size_t work_thread_count = cpu_count < 2 ? 2 : cpu_count;
 
     using boost::asio::io_service;
-    io_service work_io_service(cpu_count);
+    io_service work_io_service(ma::to_io_context_concurrency_hint(cpu_count));
 
     // Setup console controller
     ma::console_close_guard console_close_guard(ma::detail::bind(

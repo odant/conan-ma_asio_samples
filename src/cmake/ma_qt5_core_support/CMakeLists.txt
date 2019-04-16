@@ -2,7 +2,7 @@
 # Copyright (c) 2016 Marat Abrarov (abrarov@gmail.com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
-# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+# file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
 cmake_minimum_required(VERSION 3.0)
@@ -33,7 +33,16 @@ if(Qt5Core_FOUND)
 
         list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
+        # ICU_ROOT
+        if(POLICY CMP0074)
+            cmake_policy(PUSH)
+            cmake_policy(SET CMP0074 OLD)
+        endif()
         find_package(ICU REQUIRED COMPONENTS i18n uc data)
+        if(POLICY CMP0074)
+            cmake_policy(POP)
+        endif()
+
         list(APPEND cxx_libraries ${ICU_LIBRARIES})
 
         # Starting from Qt 5.5.0 PCRE library is used by QtCore

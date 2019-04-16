@@ -2,7 +2,7 @@
 // Copyright (c) 2010-2015 Marat Abrarov (abrarov@gmail.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
 #ifndef MA_HANDLER_ALLOCATOR_HPP
@@ -141,6 +141,8 @@ bool in_place_handler_allocator<alloc_size>::owns(void* pointer) const
   const byte_type* begin = static_cast<const byte_type*>(storage_.address());
   const byte_type* end = begin + alloc_size;
   const byte_type* p = static_cast<const byte_type*>(pointer);
+  //fixme: Undefined behavior - comparison of unrelated pointers
+  // thanks to https://www.viva64.com/en/b/0576/
   return (p >= begin) && (p < end);
 }
 
@@ -200,6 +202,8 @@ inline bool in_heap_handler_allocator::owns(void* pointer) const
   const byte_type* begin = storage_.get();
   const byte_type* end = begin + size_;
   const byte_type* p = static_cast<const byte_type*>(pointer);
+  //fixme: Undefined behavior - comparison of unrelated pointers
+  // thanks to https://www.viva64.com/en/b/0576/
   return (p >= begin) && (p < end) && begin && p;
 }
 
