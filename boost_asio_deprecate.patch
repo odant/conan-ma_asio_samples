@@ -1,0 +1,23 @@
+--- a/src/libs/ma_strand/include/ma/strand.hpp
++++ b/src/libs/ma_strand/include/ma/strand.hpp
+@@ -28,7 +28,7 @@ class strand : private boost::noncopyable
+ public:
+   explicit strand(boost::asio::io_service& io_service);
+ 
+-  boost::asio::io_service& get_io_service();
++  boost::asio::io_service& context();
+ 
+   template<typename Handler>
+   void dispatch(MA_FWD_REF(Handler) handler);
+@@ -55,9 +55,9 @@ inline strand::strand(boost::asio::io_service& io_service)
+ {
+ }
+ 
+-inline boost::asio::io_service& strand::get_io_service()
++inline boost::asio::io_service& strand::context()
+ {
+-  return strand_.get_io_service();
++  return strand_.context();
+ }
+ 
+ template<typename Handler>

@@ -1,10 +1,10 @@
-from conans import ConanFile
+from conans import ConanFile, tools
 import os
 
 
 class MaasiosamplesConan(ConanFile):
     name = "ma_asio_samples"
-    version = "1.3.0+0"
+    version = "1.3.0+1"
     license = "Boost Software License - Version 1.0. http://www.boost.org/LICENSE_1_0.txt"
     description = \
 '''    
@@ -12,8 +12,11 @@ Examples (code samples) describing the construction of active objects on the top
 A code-based guide for client/server creation with usage of active object pattern by means of Boost C++ Libraries.
 '''
     url = "https://github.com/odant/conan-ma_asio_samples"
-    exports_sources = "src/*"
+    exports_sources = "src/*", "boost_asio_deprecate.patch"
     no_copy_source = True
+
+    def source(self):
+        tools.patch(patch_file="boost_asio_deprecate.patch")
     
     def package(self):
         libs = os.path.join(self.source_folder, "src", "libs")
