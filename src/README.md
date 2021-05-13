@@ -1,11 +1,12 @@
 # Asio samples
 
-[![Release](https://img.shields.io/github/release/mabrarov/asio_samples.svg)](https://github.com/mabrarov/asio_samples/releases/latest) [![License](https://img.shields.io/badge/license-BSL%201.0-brightgreen.svg)](https://github.com/mabrarov/asio_samples/tree/master/LICENSE) 
+[![Release](https://img.shields.io/github/release/mabrarov/asio_samples.svg)](https://github.com/mabrarov/asio_samples/releases/latest)
+[![License](https://img.shields.io/badge/license-BSL%201.0-brightgreen.svg)](https://github.com/mabrarov/asio_samples/tree/master/LICENSE) 
 
 Branch | Linux | Windows | Coverage | Coverity Scan
 -------|-------|---------|----------|--------------
-[master](https://github.com/mabrarov/asio_samples/tree/master) | [![Travis CI build status](https://travis-ci.org/mabrarov/asio_samples.svg?branch=master)](https://travis-ci.org/mabrarov/asio_samples) | [![AppVeyor CI build status](https://ci.appveyor.com/api/projects/status/m3m15b3wxkyhqfj2/branch/master?svg=true)](https://ci.appveyor.com/project/mabrarov/asio-samples) | [![Linux code coverage status](https://codecov.io/gh/mabrarov/asio_samples/branch/master/graph/badge.svg)](https://codecov.io/gh/mabrarov/asio_samples/branch/master) | [![Coverity Scan status](https://scan.coverity.com/projects/9191/badge.svg)](https://scan.coverity.com/projects/mabrarov-asio_samples)  
-[develop](https://github.com/mabrarov/asio_samples/tree/develop) | [![Travis CI build status](https://travis-ci.org/mabrarov/asio_samples.svg?branch=develop)](https://travis-ci.org/mabrarov/asio_samples) | [![AppVeyor CI build status](https://ci.appveyor.com/api/projects/status/m3m15b3wxkyhqfj2/branch/develop?svg=true)](https://ci.appveyor.com/project/mabrarov/asio-samples) | [![Linux code coverage status](https://codecov.io/gh/mabrarov/asio_samples/branch/develop/graph/badge.svg)](https://codecov.io/gh/mabrarov/asio_samples/branch/develop) | |
+[master](https://github.com/mabrarov/asio_samples/tree/master) | [![Travis CI build status](https://travis-ci.org/mabrarov/asio_samples.svg?branch=master)](https://travis-ci.org/mabrarov/asio_samples) | [![AppVeyor CI build status](https://ci.appveyor.com/api/projects/status/m3m15b3wxkyhqfj2/branch/master?svg=true)](https://ci.appveyor.com/project/mabrarov/asio-samples) | [![Code coverage status](https://codecov.io/gh/mabrarov/asio_samples/branch/master/graph/badge.svg)](https://codecov.io/gh/mabrarov/asio_samples/branch/master) | [![Coverity Scan status](https://scan.coverity.com/projects/9191/badge.svg)](https://scan.coverity.com/projects/mabrarov-asio_samples)  
+[develop](https://github.com/mabrarov/asio_samples/tree/develop) | [![Travis CI build status](https://travis-ci.org/mabrarov/asio_samples.svg?branch=develop)](https://travis-ci.org/mabrarov/asio_samples) | [![AppVeyor CI build status](https://ci.appveyor.com/api/projects/status/m3m15b3wxkyhqfj2/branch/develop?svg=true)](https://ci.appveyor.com/project/mabrarov/asio-samples) | [![Code coverage status](https://codecov.io/gh/mabrarov/asio_samples/branch/develop/graph/badge.svg)](https://codecov.io/gh/mabrarov/asio_samples/branch/develop) | |
 
 Extended examples for [Boost.Asio](http://www.boost.org/doc/libs/release/doc/html/boost_asio.html).
 
@@ -24,7 +25,7 @@ Refer to [docker/builder/README.md](docker/builder/README.md) for instruction on
 
   * Visual Studio (Visual C++)
 
-    2008, 2010, 2012, 2013, 2015 are tested versions
+    2008, 2010, 2012, 2013, 2015, 2017, 2019 are tested versions
 
   * GCC with make
 
@@ -36,11 +37,11 @@ Refer to [docker/builder/README.md](docker/builder/README.md) for instruction on
 
 * [CMake](https://cmake.org/)
 
-  3.0+, consider using the latest version of CMake because it supports recent versions of libraries
+  3.1+, consider using the latest version of CMake because it supports recent versions of libraries
 
 * [Boost](https://www.boost.org)
 
-  1.47+, the latest tested version is 1.69
+  1.47+, the latest tested version is 1.74
 
 * [Google Test](https://github.com/google/googletest) 
 
@@ -71,14 +72,19 @@ Refer to [docker/builder/README.md](docker/builder/README.md) for instruction on
   * Release
   * RelWithDebInfo
   * MinSizeRel
-* `cmake_generator` environment variable is [CMake generator](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html) (underlying build system), like:
-  * `Visual Studio 14 2015 Win64` - Visual Studio 2015, x64
-  * `Visual Studio 12 2013 Win64` - Visual Studio 2013, x64
-  * `Visual Studio 10 2010` - Visual Studio 2010, x86
-  * `Visual Studio 9 2008` - Visual Studio 2008, x86
+* `cmake_generator` environment variable is [CMake generator](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
+  * `Visual Studio 14 2015` - Visual Studio 2015
+  * `Visual Studio 15 2017` - Visual Studio 2017
+  * `Visual Studio 16 2019` - Visual Studio 2019
+  * `Visual Studio 12 2013` - Visual Studio 2013
+  * `Visual Studio 10 2010` - Visual Studio 2010
+  * `Visual Studio 9 2008` - Visual Studio 2008
   * `NMake Makefiles` - NMake
   * `MinGW Makefiles` - MinGW makefiles
   * `Unix Makefiles` - *nix makefiles
+* `cmake_platform` environment variable is [CMAKE_GENERATOR_PLATFORM](https://cmake.org/cmake/help/latest/variable/CMAKE_GENERATOR_PLATFORM.html)
+  * `Win32` - x86 platform when using Visual Studio
+  * `x64` - amd64 (x64) platform when using Visual Studio
 
 Building of CMake project is usually performed in 2 steps:
 
@@ -89,7 +95,13 @@ Building of CMake project is usually performed in 2 steps:
 
 Assuming current directory is `asio_samples_build_dir`.
 
-Windows Command Prompt:
+Windows Command Prompt, Visual Studio CMake generator:
+
+```cmd
+cmake ... -G "%cmake_generator%" -A "%cmake_platform%" "%asio_samples_home_dir%"
+```
+
+Windows Command Prompt, NMake / MinGW makefiles CMake generator
 
 ```cmd
 cmake ... -G "%cmake_generator%" "%asio_samples_home_dir%"
@@ -103,10 +115,10 @@ cmake ... -G "${cmake_generator}" "${asio_samples_home_dir}"
 
 where `...` are optional parameters which are described below.
 
-Use `ma_build_tests` CMake variable to exclude tests from build (tests are included by default):
+Use `MA_TESTS` CMake variable to exclude tests from build (tests are included by default):
 
 ```
-cmake -D ma_build_tests=OFF ...
+cmake -D MA_TESTS=OFF ...
 ```
 
 CMake project uses CMake find modules, so most of parameters comes from these CMake modules:
@@ -208,7 +220,7 @@ CMake project uses CMake find modules, so most of parameters comes from these CM
     -D QT_QMAKE_EXECUTABLE="${qt4_home_dir}/bin/qmake.exe"
     ```
 
-  `ma_qt` CMake variable can be used to avoid usage of Qt and to skip examples using Qt.
+  `MA_QT` CMake variable can be used to avoid usage of Qt and to skip examples using Qt.
   Possible values are:
   
   * `ON` (default) - search for (require) and use Qt
@@ -294,20 +306,20 @@ To build with [static C/C++ runtime](https://gitlab.kitware.com/cmake/community/
 **Note** that on Windows `cmake-qt` searches for some system libraries (OpenGL) therefore to work correctly CMake should be executed after Windows SDK environment was set up (even if `Visual Studio` generator is used).
 
 The CMake project searches for Qt 5.x first and if Qt 5.x is not found then it searches for Qt 4.x.
-This can be changed with `ma_force_qt_major_version` CMake variable which can be specified in command line. 
+This can be changed with `MA_QT_MAJOR_VERSION` CMake variable which can be specified in command line. 
 
 Possible values are:
 
 * 4 - search for Qt 4.x only
 
   ```
-  -D ma_force_qt_major_version=4
+  -D MA_QT_MAJOR_VERSION=4
   ```
 
 * 5 - search for Qt 5.x only
 
   ```
-  -D ma_force_qt_major_version=5
+  -D MA_QT_MAJOR_VERSION=5
   ```
 
 Example of generation of Visual Studio 2015 project with:
@@ -319,6 +331,8 @@ Example of generation of Visual Studio 2015 project with:
 * x64 build
 
 ```cmd
+set "cmake_generator=Visual Studio 14 2015"
+set "cmake_platform=x64"
 cmake ^
 -D CMAKE_USER_MAKE_RULES_OVERRIDE="%asio_samples_home_dir%/cmake/static_c_runtime_overrides.cmake" ^
 -D CMAKE_USER_MAKE_RULES_OVERRIDE_CXX="%asio_samples_home_dir%/cmake/static_cxx_runtime_overrides.cmake" ^
@@ -330,7 +344,8 @@ cmake ^
 -D Qt5Core_DIR="%qt5_home_dir%/lib/cmake/Qt5Core" ^
 -D Qt5Gui_DIR="%qt5_home_dir%/lib/cmake/Qt5Gui" ^
 -D Qt5Widgets_DIR="%qt5_home_dir%/lib/cmake/Qt5Widgets" ^
--G "Visual Studio 14 2015 Win64" ^
+-G "%cmake_generator%" ^
+-A "%cmake_platform%" ^
 "%asio_samples_home_dir%"
 ```
 
@@ -341,11 +356,12 @@ Example of generation of makefiles on *nix with:
 * shared Qt 5.x
 
 ```bash
+cmake_generator="Unix Makefiles" && \
 cmake \
 -D Boost_USE_STATIC_LIBS=ON \
--D ma_force_qt_major_version=5 \
+-D MA_QT_MAJOR_VERSION=5 \
 -D CMAKE_BUILD_TYPE=${build_type} \
--G "Unix Makefiles" \
+-G "${cmake_generator}" \
 "${asio_samples_home_dir}"
 ```
 
@@ -358,6 +374,8 @@ Example of generation of Visual Studio 2015 project with:
 * x64 build
 
 ```cmd
+set "cmake_generator=Visual Studio 14 2015"
+set "cmake_platform=x64"
 cmake ^
 -D BOOST_INCLUDEDIR="%boost_headers_dir%" ^
 -D BOOST_LIBRARYDIR="%boost_libs_dir%" ^
@@ -367,7 +385,8 @@ cmake ^
 -D Qt5Core_DIR="%qt5_home_dir%/lib/cmake/Qt5Core" ^
 -D Qt5Gui_DIR="%qt5_home_dir%/lib/cmake/Qt5Gui" ^
 -D Qt5Widgets_DIR="%qt5_home_dir%/lib/cmake/Qt5Widgets" ^
--G "Visual Studio 14 2015 Win64" ^
+-G "%cmake_generator%" ^
+-A "%cmake_platform%" ^
 "%asio_samples_home_dir%"
 ```
 
@@ -381,6 +400,8 @@ Example of generation of Visual Studio 2013 project with:
 * Intel C++ Compiler XE 2015
 
 ```cmd
+set "cmake_generator=Visual Studio 12 2013"
+set "cmake_platform=x64"
 cmake ^
 -D CMAKE_USER_MAKE_RULES_OVERRIDE="%asio_samples_home_dir%/cmake/static_c_runtime_overrides.cmake" ^
 -D CMAKE_USER_MAKE_RULES_OVERRIDE_CXX="%asio_samples_home_dir%/cmake/static_cxx_runtime_overrides.cmake" ^
@@ -396,7 +417,8 @@ cmake ^
 -D CMAKE_C_COMPILER=icl ^
 -D CMAKE_CXX_COMPILER=icl ^
 -T "Intel C++ Compiler XE 15.0" ^
--G "Visual Studio 12 2013 Win64" ^
+-G "%cmake_generator%" ^
+-A "%cmake_platform%" ^
 "%asio_samples_home_dir%"
 ```
 
@@ -409,6 +431,8 @@ Example of generation of Visual Studio 2015 project with:
 * Intel C++ Compiler 2016
 
 ```cmd
+set "cmake_generator=Visual Studio 14 2015"
+set "cmake_platform=x64"
 cmake ^
 -D BOOST_INCLUDEDIR="%boost_headers_dir%" ^
 -D BOOST_LIBRARYDIR="%boost_libs_dir%" ^
@@ -421,7 +445,8 @@ cmake ^
 -D CMAKE_C_COMPILER=icl ^
 -D CMAKE_CXX_COMPILER=icl ^
 -T "Intel C++ Compiler 16.0" ^
--G "Visual Studio 14 2015 Win64" ^
+-G "%cmake_generator%" ^
+-A "%cmake_platform%" ^
 "%asio_samples_home_dir%"
 ```
 
@@ -433,6 +458,8 @@ Example of generation of Visual Studio 2010 project with:
 * x86 build
 
 ```cmd
+set "cmake_generator=Visual Studio 10 2010"
+set "cmake_platform=Win32"
 cmake ^
 -D BOOST_INCLUDEDIR="%boost_headers_dir%" ^
 -D BOOST_LIBRARYDIR="%boost_libs_dir%" ^
@@ -440,7 +467,8 @@ cmake ^
 -D Boost_USE_STATIC_LIBS=ON ^
 -D gtest_force_shared_crt=ON ^
 -D QT_QMAKE_EXECUTABLE="%qt4_home_dir%/bin/qmake.exe" ^
--G "Visual Studio 10 2010" ^
+-G "%cmake_generator%" ^
+-A "%cmake_platform%" ^
 "%asio_samples_home_dir%"
 ```
 
@@ -452,6 +480,8 @@ Example of generation of Visual Studio 2008 project with:
 * x86 build
 
 ```cmd
+set "cmake_generator=Visual Studio 9 2008"
+set "cmake_platform=Win32"
 cmake ^
 -D CMAKE_USER_MAKE_RULES_OVERRIDE="%asio_samples_home_dir%/cmake/static_c_runtime_overrides.cmake" ^
 -D CMAKE_USER_MAKE_RULES_OVERRIDE_CXX="%asio_samples_home_dir%/cmake/static_cxx_runtime_overrides.cmake" ^
@@ -460,7 +490,8 @@ cmake ^
 -D Boost_NO_SYSTEM_PATHS=ON ^
 -D Boost_USE_STATIC_LIBS=ON ^
 -D QT_QMAKE_EXECUTABLE="%qt4_home_dir%/bin/qmake.exe" ^
--G "Visual Studio 9 2008" ^
+-G "%cmake_generator%" ^
+-A "%cmake_platform%" ^
 "%asio_samples_home_dir%"
 ```
 
@@ -468,18 +499,16 @@ cmake ^
 
 Building of generated project can be done using chosen (during generation of project) build system or using CMake.
 
-Assuming current directory is `asio_samples_build_dir`.
-
 CMake command to build generated project (Windows Command Prompt):
 
 ```cmd
-cmake --build . --config %build_type%
+cmake --build "%asio_samples_build_dir%" --config "%build_type%"
 ```
 
 CMake command to build generated project (*nix shell):
 
 ```bash
-cmake --build . --config ${build_type}
+cmake --build "${asio_samples_build_dir}" --config "${build_type}"
 ```
 
 ### Running tests
@@ -489,11 +518,11 @@ Assuming current directory is `asio_samples_build_dir`.
 [CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html) command to run built tests (Windows Command Prompt):
 
 ```cmd
-ctest --build-config %build_type%
+ctest --build-config "%build_type%"
 ```
 
 CTest command to run built tests (*nix shell):
 
 ```bash
-ctest --build-config ${build_type}
+ctest --build-config "${build_type}"
 ```

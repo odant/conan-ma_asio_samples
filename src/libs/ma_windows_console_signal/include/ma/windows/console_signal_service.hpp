@@ -21,6 +21,7 @@
 #include <boost/asio.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/system/error_code.hpp>
+#include <ma/io_context_helpers.hpp>
 #include <ma/detail/type_traits.hpp>
 #include <ma/bind_handler.hpp>
 #include <ma/detail/memory.hpp>
@@ -109,15 +110,13 @@ private:
     ~handler_base();
     handler_base(const this_type&);
 
+    MA_DELETED_COPY_ASSIGNMENT_OPERATOR(this_type)
+
   private:
-    this_type& operator=(const this_type&);
-
 #if defined(MA_TYPE_ERASURE_NOT_USE_VIRTUAL)
-
     destroy_func_type destroy_func_;
     post_func_type    post_func_;
-
-#endif // defined(MA_TYPE_ERASURE_NOT_USE_VIRTUAL)
+#endif
   }; // class handler_base
 
   typedef detail::intrusive_forward_list<handler_base> handler_list;
@@ -218,9 +217,9 @@ public:
   ~handler_wrapper();
 #endif
 
-private:
-  this_type& operator=(const this_type&);
+  MA_DELETED_COPY_ASSIGNMENT_OPERATOR(this_type)
 
+private:
   static void do_destroy(base_type*);
   static void do_post(base_type*, const boost::system::error_code&, int);
 
@@ -235,7 +234,7 @@ void console_signal_service::async_wait(implementation_type& impl,
   lock_guard lock(mutex_);
   if (shutdown_)
   {
-    get_io_service().post(ma::bind_handler(detail::move(handler),
+    ma::get_io_context(*this).post(ma::bind_handler(detail::move(handler),
         boost::asio::error::operation_aborted, 0));
     return;
   }
@@ -243,14 +242,14 @@ void console_signal_service::async_wait(implementation_type& impl,
   if (sigint_queued_signals_)
   {
     --sigint_queued_signals_;
-    get_io_service().post(ma::bind_handler(detail::move(handler),
+    ma::get_io_context(*this).post(ma::bind_handler(detail::move(handler),
         boost::system::error_code(), SIGINT));
     return;
   }
   if (sigterm_queued_signals_)
   {
     --sigterm_queued_signals_;
-    get_io_service().post(ma::bind_handler(detail::move(handler),
+    ma::get_io_context(*this).post(ma::bind_handler(detail::move(handler),
         boost::system::error_code(), SIGTERM));
     return;
   }
@@ -260,7 +259,7 @@ void console_signal_service::async_wait(implementation_type& impl,
 
   detail::raw_handler_ptr<alloc_traits> raw_ptr(handler);
   detail::handler_ptr<alloc_traits> ptr(raw_ptr,
-      detail::ref(this->get_io_service()), detail::move(handler));
+      detail::ref(ma::get_io_context(*this)), detail::move(handler));
 
   // Add handler to the list of waiting handlers.
   impl.handlers_.push_front(*ptr.get());
@@ -374,7 +373,7 @@ void console_signal_service::handler_wrapper<Handler>::do_post(
   // through the local copy of handler
   ptr.reset();
   // Post the copy of handler's local copy to io_service
-  boost::asio::io_service& io_service = work.get_io_service();
+  boost::asio::io_service& io_service = ma::get_io_context(work);
   io_service.post(ma::bind_handler(detail::move(handler), error, signal));
 }
 

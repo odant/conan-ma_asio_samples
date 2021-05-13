@@ -19,6 +19,7 @@
 #include <boost/assert.hpp>
 #include <ma/config.hpp>
 #include <ma/shared_ptr_factory.hpp>
+#include <ma/io_context_helpers.hpp>
 #include <ma/windows/console_signal_service.hpp>
 #include <ma/detail/memory.hpp>
 #include <ma/detail/sp_singleton.hpp>
@@ -92,9 +93,9 @@ public:
 
   void operator()();
 
-private:
-  this_type& operator=(const this_type&);
+  MA_DELETED_COPY_ASSIGNMENT_OPERATOR(this_type)
 
+private:
   handler_list_owner_ptr handlers_;
   int signal_;
 }; // class console_signal_service::handler_list_binder
@@ -154,21 +155,14 @@ BOOL WINAPI console_signal_service_base::system_service::windows_ctrl_handler(
   {
   case CTRL_C_EVENT:
   case CTRL_BREAK_EVENT:
-    if (instance->deliver_signal(SIGINT))
-    {
-      return TRUE;
-    }
-    return FALSE;
+    return instance->deliver_signal(SIGINT) ? TRUE : FALSE;
   case CTRL_CLOSE_EVENT:
   case CTRL_LOGOFF_EVENT:
   case CTRL_SHUTDOWN_EVENT:
-    if (instance->deliver_signal(SIGTERM))
-    {
-      return TRUE;
-    }
+    return instance->deliver_signal(SIGTERM) ? TRUE : FALSE;
   default:
     return FALSE;
-  };
+  }
 }
 
 bool console_signal_service_base::system_service::deliver_signal(int signal)
@@ -401,7 +395,7 @@ bool console_signal_service::deliver_signal(int signal)
     }
     if (!handlers->list.empty())
     {
-      get_io_service().post(handler_list_binder(handlers, signal));
+      ma::get_io_context(*this).post(handler_list_binder(handlers, signal));
     }
     else
     {
