@@ -12,12 +12,9 @@ Examples (code samples) describing the construction of active objects on the top
 A code-based guide for client/server creation with usage of active object pattern by means of Boost C++ Libraries.
 '''
     url = "https://github.com/odant/conan-ma_asio_samples"
-    exports_sources = "src/*", "boost_asio_deprecate.patch"
+    exports_sources = "src/*"
     no_copy_source = True
 
-    def source(self):
-        tools.patch(patch_file="boost_asio_deprecate.patch")
-    
     def package(self):
         libs = os.path.join(self.source_folder, "src", "libs")
         for folder in os.listdir(libs):
