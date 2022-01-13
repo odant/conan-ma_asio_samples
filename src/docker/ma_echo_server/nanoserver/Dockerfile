@@ -5,19 +5,24 @@
 # file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
-FROM abrarov/msvc-2019:2.9.0 AS build
+FROM abrarov/msvc-2019:2.13.0 AS build
 
-ARG MA_REVISION=master
+ENV DOWNLOADS_DIR="C:\download" \
+    BOOST_DIR="C:\dependencies\boost"
 
-ENV CMAKE_VERSION="3.18.2" \
-    BOOST_VERSION="1.74.0" \
-    BOOST_URL="https://dl.bintray.com/mabrarov/generic/boost" \
-    SOURCE_DIR="C:\asio_samples" \
-    BUILD_DIR="C:\build" \
-    DEPENDENCIES_DIR="C:\dependencies" \
-    DOWNLOADS_DIR="C:\downloads"
+ADD ["install", "C:/install/"]
+
+ARG BOOST_VERSION="1.78.0"
+ARG BOOST_URL="https://boostorg.jfrog.io/ui/api/v1/download?repoKey=main&path="
+
+RUN powershell -ExecutionPolicy Bypass -File "C:\install\install.ps1"
+
+ENV SOURCE_DIR="C:\asio_samples" \
+    BUILD_DIR="C:\build"
 
 ADD ["app", "C:/app/"]
+
+ARG MA_REVISION=master
 
 RUN powershell -ExecutionPolicy Bypass -File "C:\app\build.ps1"
 
@@ -27,6 +32,8 @@ LABEL name="abrarov/tcp-echo" \
     description="TCP echo server from Asio samples project" \
     license="BSL-1.0"
 
-COPY --from=build "C:\\build\\examples\\ma_echo_server\\Release\\ma_echo_server.exe" "C:\\ma_echo_server.exe"
-
 ENTRYPOINT ["C:\\ma_echo_server.exe"]
+
+COPY --from=build \
+    ["C:\\\\build\\\\examples\\\\ma_echo_server\\\\Release\\\\ma_echo_server.exe", \
+     "C:\\\\ma_echo_server.exe"]
