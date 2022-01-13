@@ -4,7 +4,7 @@ import os
 
 class MaasiosamplesConan(ConanFile):
     name = "ma_asio_samples"
-    version = "1.6.3+0"
+    version = "1.6.4+0"
     license = "Boost Software License - Version 1.0. http://www.boost.org/LICENSE_1_0.txt"
     description = \
 '''    
